@@ -41,8 +41,59 @@ const deleteServicos = async (params) => {
     return query.rowCount == 1;
 } 
 
+const postRegistrarServico = async (params) => {
+//cria um novo servico
+let {valorTotal, veiculo} = params;
+let sqlServico =`insert into servico_itens
+(
+    valor_total,
+    id_veiculo
+) values($1, $2) returning id` ;
+let insert = await db.query(sqlServico, [valorTotal, veiculo])
+let id_servicos_itens =  insert.rows[0].id;
+
+
+//popula o servico com os itens
+let {descricao, valorItem, data} = params
+let sqlItens = 
+    `insert into servicos
+    (descricao, valor, data, id_servico_itens)
+    values($1, $2, $3, $4) returning id`;
+let res = await db.query(sqlItens,[descricao, valorItem, data, id_servicos_itens])
+let id_servico = res.rows[0].id;
+
+//popula pecas no servico
+let {pecas} = params;
+let sqlPecas = 
+    `insert into pecas_servicos
+    (id_servico, id_pecas)
+    values ($1, $2) returning id`;
+ await db.query(sqlPecas, [id_servico, pecas]);
+
+let sqlReturn = `
+select 
+    si.id as servico,
+    si.valor_total,
+    si.id_veiculo as veiculo,
+    s.descricao as descricao_servico,
+    s.valor,
+    s.data,
+    p.descricao as peca
+from servicos_itens as si
+join servico as s on (si.id = s.id_servicos_itens)
+join pecas_servicos as ps on (s.id = ps.id_servico)
+join pecas as p on (p.id = ps.id_pecas)
+where si.id = $1
+`;
+
+let response = await db.query(sqlReturn, [id_servicos_itens])
+return response;
+
+}
+
 module.exports.pegarServicos = pegarServicos;
 module.exports.servicosId = servicosId;
 module.exports.postServicos = postServicos;
 module.exports.patchServicos = patchServicos;
 module.exports.deleteServicos = deleteServicos;
+module.exports.postRegistrarServico = postRegistrarServico;

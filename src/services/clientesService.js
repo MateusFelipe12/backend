@@ -45,7 +45,7 @@ const deleteCliente = async (params) => {
 } 
 
 const getClienteInfos = async (params) => {
-    if(params.id != 0){
+    let where = params.id != 0 ? 'WHERE c.id = $1' : '';
     let sql = ` 
     SELECT 
         c.id,
@@ -61,28 +61,10 @@ const getClienteInfos = async (params) => {
     JOIN enderecos_clientes as ec ON c.id_endereco = ec.id
     JOIN enderecos as e ON ec.id_enderecos = e.id
     JOIN contatos as co ON c.id_contato = co.id
-    WHERE c.id = $1`;
-    let query = await db.query(sql, [params.id]);
-    return query.rows;}
-    else {
-        let sql = ` 
-    SELECT 
-        c.id,
-        c.nome as cliente,
-        e.cidade,
-        e.bairro,
-        e.rua,
-        e.numero,
-        co.celular,
-        co.telefone,
-        co.email
-    FROM clientes as c
-    JOIN enderecos_clientes as ec ON c.id_endereco = ec.id
-    JOIN enderecos as e ON ec.id_enderecos = e.id
-    JOIN contatos as co ON c.id_contato = co.id`;
-    let query = await db.query(sql);
+    ${where}
+    `;
+    let query = params.id != 0 ? await db.query(sql, [params.id]) : await db.query(sql);
     return query.rows;
-    }
 }
 
 module.exports.pegarClientes = pegarClientes;

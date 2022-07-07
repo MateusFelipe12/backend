@@ -48,9 +48,20 @@ const deleteServicos = async (req, res) => {
     }
 }
 
+const postRegistrarServico = async (req, res) => {
+    try{
+        console.log(req.body);
+        const servicos = await servicosService.postRegistrarServico(req.body);
+        res.status(201).send(servicos);
+    }   catch (erro) {
+        res.status(500).send(erro);
+    }
+}
+
 
 module.exports.pegarServicos = pegarServicos;
 module.exports.servicosId = servicosId;
 module.exports.postServicos = postServicos;
 module.exports.patchServicos = patchServicos;
 module.exports.deleteServicos = deleteServicos;
+module.exports.postRegistrarServico = postRegistrarServico;
