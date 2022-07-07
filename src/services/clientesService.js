@@ -44,8 +44,50 @@ const deleteCliente = async (params) => {
     return query.rowCount == 1;
 } 
 
+const getClienteInfos = async (params) => {
+    if(params.id != 0){
+    let sql = ` 
+    SELECT 
+        c.id,
+        c.nome as cliente,
+        e.cidade,
+        e.bairro,
+        e.rua,
+        e.numero,
+        co.celular,
+        co.telefone,
+        co.email
+    FROM clientes as c
+    JOIN enderecos_clientes as ec ON c.id_endereco = ec.id
+    JOIN enderecos as e ON ec.id_enderecos = e.id
+    JOIN contatos as co ON c.id_contato = co.id
+    WHERE c.id = $1`;
+    let query = await db.query(sql, [params.id]);
+    return query.rows;}
+    else {
+        let sql = ` 
+    SELECT 
+        c.id,
+        c.nome as cliente,
+        e.cidade,
+        e.bairro,
+        e.rua,
+        e.numero,
+        co.celular,
+        co.telefone,
+        co.email
+    FROM clientes as c
+    JOIN enderecos_clientes as ec ON c.id_endereco = ec.id
+    JOIN enderecos as e ON ec.id_enderecos = e.id
+    JOIN contatos as co ON c.id_contato = co.id`;
+    let query = await db.query(sql);
+    return query.rows;
+    }
+}
+
 module.exports.pegarClientes = pegarClientes;
 module.exports.clientesId = clientesId;
 module.exports.postClientes = postClientes;
 module.exports.patchCliente = patchCliente;
 module.exports.deleteCliente = deleteCliente;
+module.exports.getClienteInfos = getClienteInfos;

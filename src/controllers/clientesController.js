@@ -8,6 +8,7 @@ const pegarClientes = async (req, res) => {
         res.status(500).send(erro);
     }
 }
+
 const clientesId = async (req, res) => {
     try{
         const cliente = await clientesService.clientesId(req.params);
@@ -47,9 +48,18 @@ const deleteCliente = async (req, res) => {
     }
 }
 
+const getClienteInfos = async (req, res) => {
+    try{
+        const cliente = await clientesService.getClienteInfos(req.params);
+        res.status(200).send(cliente);
+    } catch(erro) { 
+        res.status(500).send(erro);
+    }
+}
 
 module.exports.pegarClientes = pegarClientes;
 module.exports.clientesId = clientesId;
 module.exports.postClientes = postClientes;
 module.exports.patchCliente = patchCliente;
 module.exports.deleteCliente = deleteCliente;
+module.exports.getClienteInfos = getClienteInfos;

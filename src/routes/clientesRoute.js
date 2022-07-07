@@ -2,6 +2,7 @@ const clientesController = require('../controllers/clientesController');
 
 module.exports = (app) => {
     app.get('/clientes', clientesController.pegarClientes);
+    app.get('/clientes/informacoes/:id', clientesController.getClienteInfos);
     app.get('/clientes/:id', clientesController.clientesId);
     app.post('/clientes/novo', clientesController.postClientes);
     app.patch('/clientes', clientesController.patchCliente);
