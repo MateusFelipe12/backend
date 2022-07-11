@@ -44,20 +44,20 @@ const deleteServicos = async (params) => {
 const postRegistrarServico = async (params) => {
 //cria um novo servico
 let {valorTotal, veiculo} = params;
-let sqlServico =`insert into servico_itens
+let sqlServico =`insert into servicos_itens
 (
     valor_total,
     id_veiculo
 ) values($1, $2) returning id` ;
+
 let insert = await db.query(sqlServico, [valorTotal, veiculo])
 let id_servicos_itens =  insert.rows[0].id;
-
 
 //popula o servico com os itens
 let {descricao, valorItem, data} = params
 let sqlItens = 
-    `insert into servicos
-    (descricao, valor, data, id_servico_itens)
+    `insert into servico
+    (descricao, valor, data, id_servicos_itens)
     values($1, $2, $3, $4) returning id`;
 let res = await db.query(sqlItens,[descricao, valorItem, data, id_servicos_itens])
 let id_servico = res.rows[0].id;
